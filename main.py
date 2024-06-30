@@ -1,8 +1,13 @@
 import pickle
 
 from flask import Flask, render_template, request, jsonify
+import warnings
+
 
 app = Flask(__name__)
+
+# Suppress scikit-learn warnings
+# warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 
 
 @app.route('/')
@@ -20,6 +25,7 @@ def load_model():
 model = load_model()
 
 
+@app.route('/predict', methods=['POST'])
 def predict():
     try:
         data = request.get_json()
@@ -29,12 +35,13 @@ def predict():
         weight = int(data['weight'])
         height = int(data['height'])
         bmi = int(data['bmi'])
-        gender = data['gender']
+        genders = data['gender']
+        fitness_goals = data['fitness_goal']
 
-        fitness_goal = int(data['fitness_goal'])
+        # Numerical data
+        prediction_list = [age, workout_experience, workout_time, weight, height, bmi]
 
-        prediction_list = [age, workout_experience, workout_time, weight, height, bmi, gender]
-
+        # Categorical data encoding
         gender_list = ['Female', 'Male']
         fitness_goal_list = ['muscle up', 'weight loss']
 
@@ -45,16 +52,16 @@ def predict():
                 else:
                     prediction_list.append(0)
 
-        traverse(gender_list, gender)
-        traverse(fitness_goal_list, fitness_goal)
+        traverse(gender_list, genders)
+        traverse(fitness_goal_list, fitness_goals)
 
+        # Make Prediction
         pred = make_prediction(prediction_list).tolist()
         response = {'prediction': pred}
 
     except Exception as e:
         response = {'error': str(e)}
 
-    print(jsonify(response))
     return jsonify(response)
 
 
