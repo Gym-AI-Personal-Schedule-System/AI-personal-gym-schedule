@@ -1,33 +1,29 @@
+from flask import Flask, request, jsonify
 import pickle
-
-from flask import Flask, render_template, request, jsonify
-import warnings
-
+import numpy as np
 
 app = Flask(__name__)
 
-# Suppress scikit-learn warnings
-# warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
 
-
-@app.route('/')
-def index():
-    return render_template('index.html', title='AI Personal Gym Schedule')
-
-
+# Load ML Model
 def load_model():
-    filename = 'model/Rf_model.pickle'
+    filename='model/Rf_model3.pickle'
     with open(filename, 'rb') as file:
         model = pickle.load(file)
     return model
 
-
 model = load_model()
+
+# Prediction Function
+def make_prediction(input_data):
+    pr_val = model.predict([input_data])
+    return pr_val
 
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        # Extract data from JSON
         data = request.get_json()
         age = int(data['age'])
         workout_experience = int(data['workout_experience'])
@@ -43,7 +39,7 @@ def predict():
 
         # Categorical data encoding
         gender_list = ['Female', 'Male']
-        fitness_goal_list = ['muscle up', 'weight loss']
+        fitness_goal_list = ['General Health', 'Weight Gain', 'Muscle Gain', 'Weight Loss']
 
         def traverse(lst, value):
             for item in lst:
@@ -63,12 +59,6 @@ def predict():
         response = {'error': str(e)}
 
     return jsonify(response)
-
-
-def make_prediction(input_data):
-    pr_val = model.predict([input_data])
-    return pr_val
-
 
 if __name__ == '__main__':
     app.run(debug=True)
