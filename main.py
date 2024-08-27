@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Load ML Model
 def load_model():
-    filename='model/Rf_model3.pickle'
+    filename='model/Rf_model.pickle'
     with open(filename, 'rb') as file:
         model = pickle.load(file)
     return model
@@ -39,7 +39,8 @@ def predict():
 
         # Categorical data encoding
         gender_list = ['Female', 'Male']
-        fitness_goal_list = ['General Health', 'Weight Gain', 'Muscle Gain', 'Weight Loss']
+        # fitness_goal_list = ['muscle up','weight loss']
+        fitness_goal_list = ['General Health', 'Muscle Gain', 'Weight Gain', 'Weight Loss']
 
         def traverse(lst, value):
             for item in lst:
