@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,make_response
 import pickle
 import numpy as np
 
@@ -55,11 +55,13 @@ def predict():
         # Make Prediction
         pred = make_prediction(prediction_list).tolist()
         response = {'prediction': pred}
+        return make_response(jsonify(response), 200)
 
     except Exception as e:
         response = {'error': str(e)}
+        return make_response(jsonify(response), 500)
 
-    return jsonify(response)
+    # return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
