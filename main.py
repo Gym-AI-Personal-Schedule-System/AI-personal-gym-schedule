@@ -39,7 +39,6 @@ def predict():
 
         # Categorical data encoding
         gender_list = ['Female', 'Male']
-        # fitness_goal_list = ['muscle up','weight loss']
         fitness_goal_list = ['General Health', 'Muscle Gain', 'Weight Gain', 'Weight Loss']
 
         def traverse(lst, value):
